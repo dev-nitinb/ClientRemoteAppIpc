@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ServerSideApp</string>
+    <string name="welcome">Welcome to Remote App</string>
+</resources>

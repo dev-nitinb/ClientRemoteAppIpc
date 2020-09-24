@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ClientSideApp</string>
+    <string name="my_service_tag">MyService</string>
+</resources>
