@@ -1,5 +1,5 @@
 # ClientRemoteAppIpc
-This is a simple example to demonstrate ipc (inter process communication) between two application. Here we use Bound Service with Messenger to communicate betwwen activity of Client App with Remote Service
+This is a simple example to demonstrate ipc (inter process communication) between two application using Messenger. Here, we send data from client app sends to remote service. Remote service replies to the responds to the request by giving response.  
 
 #### Output:
 <p align="center">
@@ -9,7 +9,7 @@ This is a simple example to demonstrate ipc (inter process communication) betwee
 
 ### Appliaction
 Their are 2 Applications:
-1. **Client App**: User needs to enter 2 number to get multiplication value in Remote App.
+1. **Client App**: User needs to enter 2 number to get multiplication value as the result from Remote service in Server App. 
 2. **Server App**: Output of input values in Client App is displayed in Server App 
 
 ### Concepts used
