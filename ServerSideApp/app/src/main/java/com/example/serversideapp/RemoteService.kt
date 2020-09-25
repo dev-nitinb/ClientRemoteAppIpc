@@ -4,7 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.*
 import android.util.Log
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 const val MSG_GET_MULTIPLICATION = 1
@@ -13,16 +12,37 @@ class RemoteService: Service() {
     private val TAG="RemoteService"
 
     lateinit var mMessenger:Messenger
+    lateinit var sendReplyMessenger: Messenger
 
     //local handler
     inner class IncomingHandler: Handler() {
         override fun handleMessage(msg: Message) {
+            sendReplyMessenger = msg.replyTo
             when (msg.what){
-                MSG_GET_MULTIPLICATION ->{
+                    MSG_GET_MULTIPLICATION ->{
+                    //data received
+                    Log.i(TAG,"Message received at remote")
+                        
+                    //fetch data
                     val dataBundle=msg.data
                     val num1 = dataBundle.getInt("num1")
                     val num2 = dataBundle.getInt("num2")
-                    Log.i(TAG,"Message received at remote")
+                    var result="$num1 * $num2 = ${num1*num2}"
+
+                    //message to activity
+                    val sendMessage = Message.obtain(null, MSG_GET_MULTIPLICATION)
+                    var replyBundle= Bundle()
+                    replyBundle.putString("msg","$result")
+                    sendMessage.data=replyBundle
+
+                    try {
+                        sendReplyMessenger.send(sendMessage)
+                        Log.i(TAG,"Message sent from remote")
+                    } catch (e: Exception) {
+                        Log.i(TAG,"Error sending message from remote ${e.message}")
+
+                    }
+
                     Log.i(TAG,"o/p $num1 * $num2 = ${num1*num2}")
                     changeUiMessage("$num1 * $num2 = ${num1*num2}")
                 }

@@ -4,7 +4,6 @@ This is a simple example to demonstrate ipc (inter process communication) betwee
 #### Output:
 <p align="center">
   <img src="https://github.com/dev-nitinb/ClientRemoteAppIpc/blob/master/images/client_app1.jpg" width="250">
-  <img src="https://github.com/dev-nitinb/ClientRemoteAppIpc/blob/master/images/client_app2.jpg" width="250">
   <img src="https://github.com/dev-nitinb/ClientRemoteAppIpc/blob/master/images/server_app1.jpg" width="250">
 </p>
 

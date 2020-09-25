@@ -4,33 +4,39 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.IBinder
-import android.os.Message
-import android.os.Messenger
+import android.os.*
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
+
+const val MSG_GET_MULTIPLICATION = 1
 
 class MainActivity : AppCompatActivity() {
     val TAG="ClientMainActivity"
     lateinit var btnGetResult:Button
     lateinit var etNumber1: AppCompatEditText
     lateinit var etNumber2:AppCompatEditText
+    lateinit var tvResult: AppCompatTextView
     lateinit var mContext: Context
     private lateinit var serviceIntent:Intent
 
     //messenger for service
-    lateinit var mService: Messenger
+    lateinit var requestMessenger: Messenger
+    //messenger to fetch reply
+    lateinit var receivedMessenger:Messenger
+
     var mBound:Boolean=false
 
     //invoked while connecting with service
     private val serviceConnection=object: ServiceConnection{
         override fun onServiceConnected(name: ComponentName?, iBinder: IBinder?) {
             Log.i(TAG,"Service connected")
-            mService= Messenger(iBinder)
+            requestMessenger= Messenger(iBinder)
+            receivedMessenger= Messenger(ReceivedMessageHandler())
             mBound=true
         }
 
@@ -38,6 +44,30 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG,"Service not connected! \nOpen remote app..")
             mBound=false
             Toast.makeText(mContext,"Unable to bind the service",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    //handler for reply messenger
+    inner class ReceivedMessageHandler: Handler(){
+        override fun handleMessage(msg: Message) {
+            Log.i(TAG,"Message received at activity")
+            when(msg.what){
+                MSG_GET_MULTIPLICATION->{
+                    tvResult.visibility=View.VISIBLE
+
+                    val dataBundle=msg.data
+                    val msg = dataBundle.getString("msg")
+                    tvResult.text="Result Received: $msg"
+                    Log.i(TAG,"$msg")
+
+                    //text view gone after 20 sec
+                    Handler().postDelayed({
+                        tvResult.visibility=View.GONE
+                        }, 20000)
+                }
+                else->
+                    super.handleMessage(msg)
+            }
         }
     }
 
@@ -61,8 +91,8 @@ class MainActivity : AppCompatActivity() {
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         //unbind service
         if(mBound){
             unbindService(serviceConnection)
@@ -74,6 +104,8 @@ class MainActivity : AppCompatActivity() {
         btnGetResult=findViewById(R.id.btnGetResult)
         etNumber1=findViewById(R.id.etNumber1)
         etNumber2=findViewById(R.id.etNumber2)
+        tvResult=findViewById(R.id.tvResult)
+
         mContext=this
     }
 
@@ -109,16 +141,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun getMultiplicationResult(num1:Int, num2:Int){
         if(mBound){
-            val msg = Message.obtain(null, 1, 0, 0)
+            val msg = Message.obtain(null, MSG_GET_MULTIPLICATION, 0, 0)
             val bundle= Bundle()
             bundle.putInt("num1",num1)
             bundle.putInt("num2",num2)
             msg.data=bundle
+            msg.replyTo=receivedMessenger
             try {
                 //send message to service
-                mService.send(msg)
+                requestMessenger.send(msg)
                 Toast.makeText(mContext,"Message sent! \nCheck remote app..",Toast.LENGTH_SHORT).show()
-                Log.i(TAG,"Message sent}")
+                Log.i(TAG,"Message sent")
 
             } catch (e: Exception) {
                 Log.i(TAG,"Error ${e.message}")

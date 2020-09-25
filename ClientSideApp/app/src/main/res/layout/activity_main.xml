@@ -69,5 +69,18 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat"
         app:layout_constraintVertical_bias="0.05" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:gravity="center"
+        android:text="Result"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGetResult" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
