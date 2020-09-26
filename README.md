@@ -14,4 +14,3 @@ Their are 2 Applications:
 
 ### Concepts used
 1. Bound Service and Messenger
-2. Brodcast Receiver
